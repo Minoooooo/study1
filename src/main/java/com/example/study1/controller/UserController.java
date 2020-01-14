@@ -1,8 +1,8 @@
-package com.example.study1.Controller;
+package com.example.study1.controller;
 
 
-import com.example.study1.Repository.UserRepository;
 import com.example.study1.domain.User;
+import com.example.study1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpSession;
 
 
 @Controller
@@ -36,6 +35,28 @@ public class UserController {
         return "redirect:/users/list";
     }
 
+    @GetMapping("login")
+    public String login() {
+        return "login";
+    }
+
+    @PostMapping("login")
+    public String login(String userId, String password, HttpSession session) {
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            System.out.println("Login Failure!");
+            return "redirect:/users/login";
+        }
+        if (! password.equals(user.getPassword())) {
+            System.out.println("Login Failure!");
+            return "redirect:/users/login";
+        }
+        System.out.println("Login Success!");
+        session.setAttribute("user", user);
+
+        return "redirect:/";
+    }
+
     @GetMapping("/list")
     public String list(Model model) {
 //        model.addAttribute("users", users); // 리스트에있는걸 템플릿으로 보내줌  그후 템플릿 -> 클라이언트
@@ -46,7 +67,7 @@ public class UserController {
 
     @GetMapping("/{id}/form")
     public String updateForm(@PathVariable Long id, Model model) {
-        User user = userRepository.findById(id).get();      //길환이한테 물어보기
+        User user = userRepository.findById(id).get();
         model.addAttribute("user", user);
         return "updateForm";
     }
