@@ -3,6 +3,7 @@ package com.example.study1.controller;
 
 import com.example.study1.domain.User;
 import com.example.study1.repository.UserRepository;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,16 +73,30 @@ public class UserController {
     }
 
     @GetMapping("/{id}/form")
-    public String updateForm(@PathVariable Long id, Model model) {
+    public String updateForm(@PathVariable Long id, Model model, HttpSession session) throws Exception {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/users/login";
+        }
         User user = userRepository.findById(id).get();
+        if (loginUser.getId() != user.getId()) {
+            throw new Exception("자신의 정보가 아닙니다");
+        }
         model.addAttribute("user", user);
         return "updateForm";
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id, User newUser) {
+    public String update(@PathVariable Long id, User updatedUser, HttpSession session) throws Exception {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/users/login";
+        }
         User user = userRepository.findById(id).get();
-        user.update(newUser);
+        if (loginUser.getId() != user.getId()) {
+            throw new Exception("자신의 정보가 아닙니다");
+        }
+        user.update(updatedUser);
         userRepository.save(user);
         return "redirect:/users/list";
     }
