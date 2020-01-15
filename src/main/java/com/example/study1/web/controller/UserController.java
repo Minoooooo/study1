@@ -1,9 +1,9 @@
-package com.example.study1.controller;
+package com.example.study1.web.controller;
 
 
 import com.example.study1.domain.User;
 import com.example.study1.repository.UserRepository;
-import net.bytebuddy.implementation.bytecode.Throw;
+import com.example.study1.web.support.HttpSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,24 +43,24 @@ public class UserController {
 
     @PostMapping("login")
     public String login(String userId, String password, HttpSession session) {
-        User loginUser = userRepository.findByUserId(userId);
-        if (loginUser == null) {
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
             System.out.println("Login Failure!");
             return "redirect:/users/login";
         }
-        if (!password.equals(loginUser.getPassword())) {
+        if (!user.matchPassword(password)) {
             System.out.println("Login Failure!");
             return "redirect:/users/login";
         }
         System.out.println("Login Success!");
-        session.setAttribute("loginUser", loginUser);
+        session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
 
         return "redirect:/";
     }
 
     @GetMapping("logout")
     public String logout(HttpSession session) {
-        session.removeAttribute("loginUser");
+        session.removeAttribute(HttpSessionUtils.USER_SESSION_KEY);
         return "redirect:/";
     }
 
@@ -74,28 +74,28 @@ public class UserController {
 
     @GetMapping("/{id}/form")
     public String updateForm(@PathVariable Long id, Model model, HttpSession session) throws Exception {
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null) {
+        User loginUser = HttpSessionUtils.getUserFromSession(session);
+        if (HttpSessionUtils.isLoginUser(session)) {
             return "redirect:/users/login";
         }
-        User user = userRepository.findById(id).get();
-        if (loginUser.getId() != user.getId()) {
+        if (!loginUser.matchId(id)) {
             throw new Exception("자신의 정보가 아닙니다");
         }
+        User user = userRepository.findById(id).get();
         model.addAttribute("user", user);
         return "updateForm";
     }
 
     @PostMapping("/{id}")
     public String update(@PathVariable Long id, User updatedUser, HttpSession session) throws Exception {
-        User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null) {
+        if (HttpSessionUtils.isLoginUser(session)) {
             return "redirect:/users/login";
         }
-        User user = userRepository.findById(id).get();
-        if (loginUser.getId() != user.getId()) {
+        User loginUser = HttpSessionUtils.getUserFromSession(session);
+        if (!loginUser.matchId(id)) {
             throw new Exception("자신의 정보가 아닙니다");
         }
+        User user = userRepository.findById(id).get();
         user.update(updatedUser);
         userRepository.save(user);
         return "redirect:/users/list";

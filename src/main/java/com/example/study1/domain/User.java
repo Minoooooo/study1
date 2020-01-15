@@ -25,6 +25,19 @@ public class User {
                 '}';
     }
 
+    public boolean matchPassword(String inPutPassword){
+        if (inPutPassword == null){
+            return false;
+        }
+        return inPutPassword.equals(password);
+    }
+
+    public boolean matchId(Long inputId){
+        if (inputId == null){
+            return false;
+        }
+        return inputId.equals(inputId);
+    }
 
     public Long getId() {
         return id;
