@@ -1,9 +1,9 @@
-package com.example.study1.web.controller;
+package com.example.study1.web;
 
 
 import com.example.study1.domain.User;
 import com.example.study1.repository.UserRepository;
-import com.example.study1.web.support.HttpSessionUtils;
+import com.example.study1.support.HttpSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,7 +75,7 @@ public class UserController {
     @GetMapping("/{id}/form")
     public String updateForm(@PathVariable Long id, Model model, HttpSession session) throws Exception {
         User loginUser = HttpSessionUtils.getUserFromSession(session);
-        if (HttpSessionUtils.isLoginUser(session)) {
+        if (!HttpSessionUtils.isLoginUser(session)) {
             return "redirect:/users/login";
         }
         if (!loginUser.matchId(id)) {
@@ -88,7 +88,7 @@ public class UserController {
 
     @PostMapping("/{id}")
     public String update(@PathVariable Long id, User updatedUser, HttpSession session) throws Exception {
-        if (HttpSessionUtils.isLoginUser(session)) {
+        if (!HttpSessionUtils.isLoginUser(session)) {
             return "redirect:/users/login";
         }
         User loginUser = HttpSessionUtils.getUserFromSession(session);

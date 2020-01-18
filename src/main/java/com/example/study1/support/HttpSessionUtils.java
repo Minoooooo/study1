@@ -1,4 +1,4 @@
-package com.example.study1.web.support;
+package com.example.study1.support;
 
 import com.example.study1.domain.User;
 
