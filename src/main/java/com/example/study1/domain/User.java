@@ -1,17 +1,25 @@
 package com.example.study1.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 @Entity
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String userId;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String name;
+
+    @Email
     private String email;
 
     @Override
@@ -23,6 +31,40 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public boolean matchPassword(String inPutPassword) {
+        if (inPutPassword == null) {
+            return false;
+        }
+        return inPutPassword.equals(password);
+    }
+
+    public boolean matchId(Long inputId) {
+        if (inputId == null) {
+            return false;
+        }
+        return id.equals(inputId);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void setUserId(String userId) {
