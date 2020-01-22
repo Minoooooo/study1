@@ -9,32 +9,30 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-    <title>Hello, world form</title>
+    <title>Hello, world </title>
 </head>
 <body>
 <div class="container">
-    <table class="table table-condensed">
-        <caption>사용자 목록</caption>
-            <thead>
-                <tr>
-                    <th>사용자 번호</th>
-                    <th>사용자 아이디</th>
-                    <th>이름</th>
-                    <th>이메일</th>
-                 </tr>
-            </thead>
-            <tbody>
-            {{#users}}
-            <tr>
-                <th scope="row">{{id}}</th>
-                <td>{{userId}}</td>
-                <td>{{name}}</td>
-                <td>{{email}}</td>
-                <td><a href="/users/{{id}}/form" class="btn btn-success" role="button"> 수정</a></td>
-            </tr>
-            {{/users}}
-            </tbody>
-    </table>
+    <form>
+        <div class="form-group">
+            <label for="userId">User ID</label>
+            <input type="text" class="form-control" name="userId" placeholder="사용자 아이디">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password" placeholder="비밀번호">
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" name="name" placeholder="이름">
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" name="email" placeholder="이메일">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 </div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

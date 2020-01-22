@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("/create")
     public String create() {
-        return "form";
+        return "user/form";
     }
 
     @PostMapping("/create")
@@ -38,7 +38,7 @@ public class UserController {
 
     @GetMapping("login")
     public String login() {
-        return "login";
+        return "user/login";
     }
 
     @PostMapping("login")
@@ -69,7 +69,7 @@ public class UserController {
 //        model.addAttribute("users", users); // 리스트에있는걸 템플릿으로 보내줌  그후 템플릿 -> 클라이언트
         model.addAttribute("users", userRepository.findAll());
         //     == 위와 동일한것을 리스트 말고 api를통해서함
-        return "list";
+        return "user/list";
     }
 
     @GetMapping("/{id}/form")
@@ -83,7 +83,7 @@ public class UserController {
         }
         User user = userRepository.findById(id).get();
         model.addAttribute("user", user);
-        return "updateForm";
+        return "user/updateForm";
     }
 
     @PostMapping("/{id}")

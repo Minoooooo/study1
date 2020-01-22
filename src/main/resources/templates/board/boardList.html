@@ -13,8 +13,8 @@
 </head>
 <body>
 <div class="container">
-    <table class="table table-condensed">
-        <caption>게시판 목록</caption>
+    <table class="table table-condensed" >
+        <caption->게시판 목록</caption->
         <thead>
         <tr>
             <th>글번호</th>
@@ -28,16 +28,17 @@
         {{#boards}}
         <tr>
             <th scope="row">{{id}}</th>
-            <td>{{title}}</td>
-            {{#user}}
-            <td>{{userId}}</td>
-            {{/user}}
+            <td><a href="/board/{{id}}">{{title}}</a></td>
+            <td>{{user.userId}}</td>
             <td>{{viewCnt}}</td>
             <td>{{createDate}}</td>
         </tr>
         {{/boards}}
         </tbody>
     </table>
+    <div class="col-md-3">
+        <a href="/board/create" class="btn btn-primary pull-right" role="button">글쓰기</a>
+    </div>
 </div>
 
 <!-- Optional JavaScript -->
