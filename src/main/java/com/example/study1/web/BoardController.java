@@ -34,6 +34,7 @@ public class BoardController {
             return "/users/login";
         }
         User loginUser = HttpSessionUtils.getUserFromSession(session);
+        System.out.println(board.getUser());
         board.setUser(loginUser);
         board.setCreateDate(Date.from(Instant.now()));
         boardRepository.save(board);
@@ -48,14 +49,29 @@ public class BoardController {
     }
 
     @GetMapping("/{id}/form")
-    public String updateForm(@PathVariable Long id, Model model) {
-        model.addAttribute("board", boardRepository.findById(id).get());
+    public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
+        if (!HttpSessionUtils.isLoginUser(session)) {
+            return "/users/login";
+        }
+        User loginUser = HttpSessionUtils.getUserFromSession(session);
+        Board board = boardRepository.findById(id).get();
+        if (!board.isSameWriter(loginUser)) {
+            System.out.println("로그인정보 일치하지않음.");
+            return "/users/login";
+        }
+        model.addAttribute("board", board);
         return "/board/updateForm";
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id, Board board, HttpSession session) {
+    public String update(@PathVariable Long id, HttpSession session, Board board) {
+        if (!HttpSessionUtils.isLoginUser(session)) {
+            return "/users/login";
+        }
         User loginUser = HttpSessionUtils.getUserFromSession(session);
+        if (!board.isSameWriter(loginUser)) {
+            return "/users/login";
+        }
         board.setUser(loginUser);
         board.setCreateDate(Date.from(Instant.now()));
         boardRepository.save(board);
@@ -63,9 +79,15 @@ public class BoardController {
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id){
-//        boardRepository.deleteById(id);
-        boardRepository.delete(boardRepository.findById(id).get());
+    public String delete(@PathVariable Long id, HttpSession session, Board board) {
+        if (!HttpSessionUtils.isLoginUser(session)) {
+            return "/users/login";
+        }
+        User loginUser = HttpSessionUtils.getUserFromSession(session);
+        if (!board.isSameWriter(loginUser)) {
+            return "/users/login";
+        }
+        boardRepository.deleteById(id);
         return "redirect:/board/list";
     }
 

@@ -72,4 +72,7 @@ public class Board {
         this.user = user;
     }
 
+    public boolean isSameWriter(User loginUser) {
+        return user.getId().equals(loginUser.getId());
+    }
 }
