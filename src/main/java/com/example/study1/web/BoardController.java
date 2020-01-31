@@ -7,28 +7,25 @@ import com.example.study1.support.HttpSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
 import java.util.Date;
 
 @Controller
-@RequestMapping("board")
+@RequestMapping("/board")
 public class BoardController {
 
     @Autowired
     BoardRepository boardRepository;
 
-    @GetMapping("create")
+    @GetMapping("/create")
     public String create(HttpSession session) {
         if (!HttpSessionUtils.isLoginUser(session)) {
             return "/users/login";
         }
-        return "board/boardForm";
+        return "/board/boardForm";
     }
 
     @PostMapping("")
@@ -43,16 +40,38 @@ public class BoardController {
         return "redirect:/board/list";
 
     }
+
     @GetMapping("/{id}")
-    public String show(@PathVariable Long id, Model model){
-        Board board = boardRepository.findById(id).get();
-        model.addAttribute("board", board);
-        return "board/boardShow";
+    public String show(@PathVariable Long id, Model model) {
+        model.addAttribute("board", boardRepository.findById(id).get());
+        return "/board/boardShow";
     }
 
-    @GetMapping("list")
+    @GetMapping("/{id}/form")
+    public String updateForm(@PathVariable Long id, Model model) {
+        model.addAttribute("board", boardRepository.findById(id).get());
+        return "/board/updateForm";
+    }
+
+    @PostMapping("/{id}")
+    public String update(@PathVariable Long id, Board board, HttpSession session) {
+        User loginUser = HttpSessionUtils.getUserFromSession(session);
+        board.setUser(loginUser);
+        board.setCreateDate(Date.from(Instant.now()));
+        boardRepository.save(board);
+        return String.format("redirect:/board/%d", id);
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id){
+//        boardRepository.deleteById(id);
+        boardRepository.delete(boardRepository.findById(id).get());
+        return "redirect:/board/list";
+    }
+
+    @GetMapping("/list")
     public String list(Model model) {
         model.addAttribute("boards", boardRepository.findAll());
-        return "board/boardList";
+        return "/board/boardList";
     }
 }

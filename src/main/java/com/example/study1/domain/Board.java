@@ -71,4 +71,5 @@ public class Board {
     public void setUser(User user) {
         this.user = user;
     }
+
 }
