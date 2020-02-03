@@ -75,4 +75,9 @@ public class Board {
     public boolean isSameWriter(User loginUser) {
         return user.getId().equals(loginUser.getId());
     }
+
+    public void update(Board updateBoard) {
+        this.title = updateBoard.title;
+        this.content = updateBoard.content;
+    }
 }

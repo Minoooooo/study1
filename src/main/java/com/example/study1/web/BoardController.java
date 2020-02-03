@@ -64,26 +64,29 @@ public class BoardController {
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id, HttpSession session, Board board) {
+    public String update(@PathVariable Long id, HttpSession session, Board updatedBoard) {
+
         if (!HttpSessionUtils.isLoginUser(session)) {
             return "/users/login";
         }
         User loginUser = HttpSessionUtils.getUserFromSession(session);
+        Board board = boardRepository.findById(id).get();
         if (!board.isSameWriter(loginUser)) {
             return "/users/login";
         }
-        board.setUser(loginUser);
+        board.update(updatedBoard);
         board.setCreateDate(Date.from(Instant.now()));
         boardRepository.save(board);
         return String.format("redirect:/board/%d", id);
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id, HttpSession session, Board board) {
+    public String delete(@PathVariable Long id, HttpSession session) {
         if (!HttpSessionUtils.isLoginUser(session)) {
             return "/users/login";
         }
         User loginUser = HttpSessionUtils.getUserFromSession(session);
+        Board board = boardRepository.findById(id).get();
         if (!board.isSameWriter(loginUser)) {
             return "/users/login";
         }
